@@ -2,6 +2,14 @@
   "name": "fineapp-mcp",
   "version": "0.1.0",
   "description": "MCP server for FineApp public creative and service data",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RA1NM4KER/fineapp-mcp.git"
+  },
+  "homepage": "https://github.com/RA1NM4KER/fineapp-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/RA1NM4KER/fineapp-mcp/issues"
+  },
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
