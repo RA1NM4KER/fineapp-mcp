@@ -1,19 +1,22 @@
 import {
+  type CreativeCardsParams,
   type CreativeCardsResponse,
   type CreativeProfile,
   type CreativeSessionTypes,
-  type CreativeCardsParams,
 } from "../types/creative.js";
 import {
   creativeCardsUrl,
   creativeProfileBySlugUrl,
   creativeSessionTypesUrl,
+  requestsUrl,
 } from "./endpoints.js";
 import {
   CreativeCardsResponseSchema,
   CreativeProfileSchema,
   CreativeSessionTypesSchema,
 } from "../schemas/creative.js";
+import type { RequestsParams, RequestsResponse } from "../types/request.js";
+import { RequestsResponseSchema } from "../schemas/request.js";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dij1mb8eb/image/upload/";
 
@@ -81,4 +84,11 @@ export async function fetchCreativeSessionTypes(
     creativeSessionTypesUrl(creativeId),
     CreativeSessionTypesSchema
   );
+}
+
+export async function fetchRequests({
+  page = 0,
+  size = 12,
+}: RequestsParams = {}): Promise<RequestsResponse> {
+  return await fetchJson(requestsUrl({ page, size }), RequestsResponseSchema);
 }

@@ -14,6 +14,8 @@ import {
   listSizeSchema,
   pageSchema,
 } from "./schemas/tool-inputs.js";
+import { getRequests } from "./data/requests.js";
+import { RequestStatusSchema } from "./schemas/request.js";
 
 const server = new McpServer({
   name: "fineapp-mcp",
@@ -130,6 +132,29 @@ server.registerTool(
   },
   async ({ slug }) => {
     return jsonResult(await getCreativeFullDetails(slug));
+  }
+);
+
+server.registerTool(
+  "list_requests",
+  {
+    title: "List requests",
+    description:
+      "List public FineApp client requests. Pagination is 0-indexed. The first page is page=0. You can optionally filter by request status.",
+    inputSchema: {
+      page: pageSchema,
+      size: z.number().int().min(1).max(50).default(12),
+      status: RequestStatusSchema.optional(),
+    },
+  },
+  async ({ page = 0, size = 12, status }) => {
+    return jsonResult(
+      await getRequests({
+        page,
+        size,
+        ...(status !== undefined ? { status } : {}),
+      })
+    );
   }
 );
 
