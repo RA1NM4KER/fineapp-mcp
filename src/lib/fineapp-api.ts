@@ -1,6 +1,10 @@
 import {
   CreativeCardsResponseSchema,
+  CreativeProfileSchema,
+  CreativeSessionTypesSchema,
   type CreativeCardsResponse,
+  type CreativeProfile,
+  type CreativeSessionTypes,
 } from "../types/creative.js";
 
 const BASE_URL = "https://fineapple-api-production.up.railway.app";
@@ -37,9 +41,7 @@ export async function fetchCreativeCards({
   const response = await fetch(
     `${BASE_URL}/api/creatives/cards?${params.toString()}`,
     {
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
     }
   );
 
@@ -57,4 +59,49 @@ export async function fetchCreativeCards({
       avatarUrl: normalizeAvatarUrl(creative.avatarUrl),
     })),
   };
+}
+
+export async function fetchCreativeProfileBySlug(
+  slug: string
+): Promise<CreativeProfile> {
+  const response = await fetch(
+    `${BASE_URL}/api/creatives/slug/${encodeURIComponent(slug)}`,
+    {
+      headers: { Accept: "application/json" },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `FineApp creative profile request failed: ${response.status}`
+    );
+  }
+
+  const json = await response.json();
+  const parsed = CreativeProfileSchema.parse(json);
+
+  return {
+    ...parsed,
+    avatarUrl: normalizeAvatarUrl(parsed.avatarUrl),
+  };
+}
+
+export async function fetchCreativeSessionTypes(
+  creativeId: number
+): Promise<CreativeSessionTypes> {
+  const response = await fetch(
+    `${BASE_URL}/api/session-types/creative/${creativeId}/full`,
+    {
+      headers: { Accept: "application/json" },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `FineApp creative session types request failed: ${response.status}`
+    );
+  }
+
+  const json = await response.json();
+  return CreativeSessionTypesSchema.parse(json);
 }

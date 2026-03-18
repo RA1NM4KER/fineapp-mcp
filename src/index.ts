@@ -1,7 +1,12 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { getCreatives, searchCreatives } from "./data/creatives.js";
+import {
+  getCreativeProfile,
+  getCreativeSessionTypes,
+  getCreatives,
+  searchCreatives,
+} from "./data/creatives.js";
 
 const server = new McpServer({
   name: "fineapp-mcp",
@@ -45,6 +50,53 @@ server.registerTool(
   },
   async ({ search, page = 0, size = 8 }) => {
     const result = await searchCreatives(search, page, size);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+);
+
+server.registerTool(
+  "get_creative_profile",
+  {
+    title: "Get creative profile",
+    description: "Get a public FineApp creative profile by portfolio slug",
+    inputSchema: {
+      slug: z.string().min(1),
+    },
+  },
+  async ({ slug }) => {
+    const result = await getCreativeProfile(slug);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+);
+
+server.registerTool(
+  "get_creative_session_types",
+  {
+    title: "Get creative session types",
+    description:
+      "Get public session types and packages for a FineApp creative by creative ID",
+    inputSchema: {
+      creativeId: z.number().int().positive(),
+    },
+  },
+  async ({ creativeId }) => {
+    const result = await getCreativeSessionTypes(creativeId);
 
     return {
       content: [
