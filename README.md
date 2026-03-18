@@ -1,21 +1,28 @@
 # fineapp-mcp
 
-An MCP server for exposing public FineApp creative listings through structured tools.
+MCP server for exposing public FineApp creative listings through structured tools.
+
+## Features
+
+- Lists public creatives from FineApp
+- Supports paginated creative search
+- Validates inputs and API responses with Zod
+- Uses live public FineApp data
 
 ## Tools
 
-### `list_creatives`
+### list_creatives
 
-Lists public creatives from FineApp.
+Lists public creatives.
 
 Inputs:
 
 - `page` optional number, default `0`
 - `size` optional number, default `8`
 
-### `search_creatives`
+### search_creatives
 
-Searches public creatives from FineApp.
+Searches public creatives.
 
 Inputs:
 
@@ -27,7 +34,7 @@ Inputs:
 
 - TypeScript
 - Node.js
-- Model Context Protocol SDK
+- MCP TypeScript SDK
 - Zod
 
 ## Run locally

@@ -4,12 +4,19 @@ import {
 } from "../types/creative.js";
 
 const BASE_URL = "https://fineapple-api-production.up.railway.app";
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dij1mb8eb/image/upload/";
 
 type FetchCreativeCardsParams = {
   page?: number;
   size?: number;
   search?: string;
 };
+
+function normalizeAvatarUrl(value: string): string {
+  if (!value) return "";
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  return `${CLOUDINARY_BASE}${value}`;
+}
 
 export async function fetchCreativeCards({
   page = 0,
@@ -41,5 +48,13 @@ export async function fetchCreativeCards({
   }
 
   const json = await response.json();
-  return CreativeCardsResponseSchema.parse(json);
+  const parsed = CreativeCardsResponseSchema.parse(json);
+
+  return {
+    ...parsed,
+    content: parsed.content.map((creative) => ({
+      ...creative,
+      avatarUrl: normalizeAvatarUrl(creative.avatarUrl),
+    })),
+  };
 }
