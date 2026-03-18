@@ -18,7 +18,7 @@ type FetchCreativeCardsParams = {
 
 function normalizeAvatarUrl(value: string): string {
   if (!value) return "";
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("https://")) return value;
   return `${CLOUDINARY_BASE}${value}`;
 }
 
