@@ -1,63 +1,70 @@
 # fineapp-mcp
 
-MCP server for exposing public FineApp creatives, profiles, session offerings, and client requests through structured tools.
+MCP server for exposing FineApp creatives, profiles, session offerings, creative filters, and client requests through structured tools.
 
 ## Features
 
-- Lists public creatives from FineApp
+- Lists creatives from FineApp
 - Supports paginated creative search
+- Supports category filtering on creative listings and search
 - Finds creatives by role and location using local filtering
-- Fetches public creative profiles by slug
-- Fetches public creative session types and packages by creative ID
+- Fetches available creative specialties and locations
+- Fetches creative profiles by slug
+- Fetches creative session types and packages by creative ID
 - Provides a convenience tool for full creative details in one call
-- Lists public client requests from FineApp
+- Lists client requests from FineApp
 - Validates tool inputs and external API responses with Zod
-- Uses live public FineApp data
+- Uses live FineApp API data
 
 ## Tools
 
 ### `list_creatives`
 
-Lists public creatives.
+Lists creatives.
 
 **Inputs**
 
 - `page` optional number, default `0`
 - `size` optional number, default `8`
+- `category` optional string
 
 **Example input**
 
 {
 "page": 0,
-"size": 8
+"size": 8,
+"category": "photographer"
 }
 
 ### `search_creatives`
 
-Searches public creatives using backend search.
+Searches creatives using backend search.
 
 **Inputs**
 
 - `search` required string
 - `page` optional number, default `0`
 - `size` optional number, default `8`
+- `category` optional string
 
 **Example input**
 
 {
 "search": "videographer",
 "page": 0,
-"size": 8
+"size": 8,
+"category": "videographer"
 }
 
 ### `find_creatives`
 
-Finds creatives by optional role and/or location using local filtering on public listing data.
+Finds creatives by optional role and/or location using local filtering on listing data.
 
 **Inputs**
 
 - `role` optional string
 - `location` optional string
+- `category` optional string
 - `page` optional number, default `0`
 - `size` optional number, default `50`
 
@@ -66,13 +73,26 @@ Finds creatives by optional role and/or location using local filtering on public
 {
 "role": "videographer",
 "location": "Stellenbosch",
+"category": "videographer",
 "page": 0,
 "size": 50
 }
 
+### `get_creative_filters`
+
+Gets available FineApp creative specialties and locations.
+
+**Inputs**
+
+- none
+
+**Example input**
+
+{}
+
 ### `get_creative_profile`
 
-Gets a public creative profile by portfolio slug.
+Gets a creative profile by portfolio slug.
 
 **Inputs**
 
@@ -86,7 +106,7 @@ Gets a public creative profile by portfolio slug.
 
 ### `get_creative_session_types`
 
-Gets public session types and packages for a creative by creative ID.
+Gets session types and packages for a creative by creative ID.
 
 **Inputs**
 
@@ -121,7 +141,7 @@ Gets a creative profile and session types in a single call by portfolio slug.
 
 ### `list_requests`
 
-Lists public client requests from FineApp.
+Lists client requests from FineApp.
 
 **Inputs**
 
