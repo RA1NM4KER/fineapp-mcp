@@ -13,6 +13,7 @@ MCP server for exposing FineApp creatives, filters, profiles, session offerings,
 - Fetches creative session types and packages by creative ID
 - Provides a convenience tool for full creative details in one call
 - Lists client requests from FineApp
+- Finds client requests by category, location, and status
 - Validates tool inputs and external API responses with Zod
 - Uses live FineApp API data
 
@@ -25,9 +26,12 @@ Once connected to an MCP client like Codex, you can ask things like:
 - What services are available on FineApp?
 - What locations are available on FineApp?
 - What client requests are currently open on FineApp?
+- Find photography requests in Stellenbosch.
 - If you could say in one word what the majority of requests are about.
 
 ## Tools
+
+## Creatives
 
 ### `list_creatives`
 
@@ -109,6 +113,8 @@ Gets available FineApp creative specialties and locations.
 {}
 ```
 
+## Profiles & Packages
+
 ### `get_creative_profile`
 
 Gets a creative profile by portfolio slug.
@@ -166,6 +172,8 @@ Gets a creative profile and session types in a single call by portfolio slug.
 }
 ```
 
+## Requests
+
 ### `list_requests`
 
 Lists client requests from FineApp.
@@ -186,6 +194,30 @@ Lists client requests from FineApp.
 }
 ```
 
+### `find_requests`
+
+Finds client requests by optional category, location, and status.
+
+**Inputs**
+
+- `category` optional string
+- `location` optional string
+- `status` optional enum: `OPEN`, `IN_PROGRESS`, `ACCEPTED`, `COMPLETED`, `CANCELLED`, `EXPIRED`
+- `page` optional number, default `0`
+- `size` optional number, default `12`
+
+**Example input**
+
+```json
+{
+  "category": "photography",
+  "location": "Stellenbosch",
+  "status": "OPEN",
+  "page": 0,
+  "size": 12
+}
+```
+
 ## Tech
 
 - TypeScript
@@ -194,6 +226,8 @@ Lists client requests from FineApp.
 - Zod
 - Prettier
 - Vitest
+- Bottleneck
+- p-retry
 
 ## Run locally
 
@@ -232,12 +266,24 @@ The project includes tests for:
 
 - endpoint URL builders
 - FineApp API wrappers
+- request client behavior
 - creative data helpers
 - request data helpers
+
+## Project structure
+
+```txt
+src/
+  data/      orchestration helpers
+  lib/       request client and endpoint builders
+  schemas/   zod schemas
+  tools/     MCP tool registration by domain
+  types/     shared TypeScript types
+```
 
 ## Notes
 
 - Pagination is 0-indexed, so the first page is `page=0`.
 - This server is designed for local stdio use with MCP clients like Codex.
 - The project uses live FineApp API data and validates external responses with Zod.
-- Some FineApp endpoints may behave differently depending on the endpoint and request context.
+- Some FineApp endpoints have different access behavior depending on the endpoint and request context.
