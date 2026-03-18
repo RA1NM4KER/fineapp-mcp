@@ -5,6 +5,14 @@ import {
   type CreativeProfile,
   type CreativeSessionTypes,
 } from "../types/creative.js";
+import type { RequestsParams, RequestsResponse } from "../types/request.js";
+import {
+  CreativeCardsResponseSchema,
+  CreativeFiltersSchema,
+  CreativeProfileSchema,
+  CreativeSessionTypesSchema,
+} from "../schemas/creative.js";
+import { RequestsResponseSchema } from "../schemas/request.js";
 import {
   creativeCardsUrl,
   creativeFiltersUrl,
@@ -12,14 +20,7 @@ import {
   creativeSessionTypesUrl,
   requestsUrl,
 } from "./endpoints.js";
-import {
-  CreativeCardsResponseSchema,
-  CreativeFiltersSchema,
-  CreativeProfileSchema,
-  CreativeSessionTypesSchema,
-} from "../schemas/creative.js";
-import type { RequestsParams, RequestsResponse } from "../types/request.js";
-import { RequestsResponseSchema } from "../schemas/request.js";
+import { requestJson } from "./request-client.js";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dij1mb8eb/image/upload/";
 
@@ -27,22 +28,6 @@ function normalizeAvatarUrl(value: string): string {
   if (!value) return "";
   if (value.startsWith("https://")) return value;
   return `${CLOUDINARY_BASE}${value}`;
-}
-
-async function fetchJson<T>(
-  url: string,
-  schema: { parse: (input: unknown) => T }
-): Promise<T> {
-  const response = await fetch(url, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error(`FineApp API request failed: ${response.status}`);
-  }
-
-  const json = await response.json();
-  return schema.parse(json);
 }
 
 export async function fetchCreativeCards({
@@ -58,7 +43,7 @@ export async function fetchCreativeCards({
     ...(category !== undefined ? { category } : {}),
   };
 
-  const parsed = await fetchJson(
+  const parsed = await requestJson(
     creativeCardsUrl(params),
     CreativeCardsResponseSchema
   );
@@ -75,7 +60,7 @@ export async function fetchCreativeCards({
 export async function fetchCreativeProfileBySlug(
   slug: string
 ): Promise<CreativeProfile> {
-  const parsed = await fetchJson(
+  const parsed = await requestJson(
     creativeProfileBySlugUrl(slug),
     CreativeProfileSchema
   );
@@ -89,19 +74,19 @@ export async function fetchCreativeProfileBySlug(
 export async function fetchCreativeSessionTypes(
   creativeId: number
 ): Promise<CreativeSessionTypes> {
-  return fetchJson(
+  return requestJson(
     creativeSessionTypesUrl(creativeId),
     CreativeSessionTypesSchema
   );
 }
 
 export async function fetchCreativeFilters(): Promise<CreativeFilters> {
-  return fetchJson(creativeFiltersUrl(), CreativeFiltersSchema);
+  return requestJson(creativeFiltersUrl(), CreativeFiltersSchema);
 }
 
 export async function fetchRequests({
   page = 0,
   size = 12,
 }: RequestsParams = {}): Promise<RequestsResponse> {
-  return await fetchJson(requestsUrl({ page, size }), RequestsResponseSchema);
+  return requestJson(requestsUrl({ page, size }), RequestsResponseSchema);
 }
