@@ -1,7 +1,4 @@
 import {
-  CreativeCardsResponseSchema,
-  CreativeProfileSchema,
-  CreativeSessionTypesSchema,
   type CreativeCardsResponse,
   type CreativeProfile,
   type CreativeSessionTypes,
@@ -12,6 +9,11 @@ import {
   creativeProfileBySlugUrl,
   creativeSessionTypesUrl,
 } from "./endpoints.js";
+import {
+  CreativeCardsResponseSchema,
+  CreativeProfileSchema,
+  CreativeSessionTypesSchema,
+} from "../schemas/creative.js";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dij1mb8eb/image/upload/";
 
