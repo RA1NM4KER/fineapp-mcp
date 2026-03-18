@@ -7,6 +7,7 @@ export function creativeCardsUrl({
   page = 0,
   size = 8,
   search,
+  category,
 }: CreativeCardsParams = {}) {
   const params = new URLSearchParams({
     page: String(page),
@@ -19,6 +20,10 @@ export function creativeCardsUrl({
     params.set("search", search.trim());
   }
 
+  if (category?.trim()) {
+    params.set("category", category.trim());
+  }
+
   return `${BASE_URL}/creatives/cards?${params.toString()}`;
 }
 
@@ -28,6 +33,10 @@ export function creativeProfileBySlugUrl(slug: string) {
 
 export function creativeSessionTypesUrl(creativeId: number) {
   return `${BASE_URL}/session-types/creative/${creativeId}/full`;
+}
+
+export function creativeFiltersUrl() {
+  return `${BASE_URL}/creatives/filters`;
 }
 
 export function requestsUrl({ page = 0, size = 12 }: RequestsParams = {}) {

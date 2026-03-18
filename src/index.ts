@@ -3,19 +3,21 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import {
   findCreatives,
+  getCreativeFilters,
   getCreativeFullDetails,
   getCreativeProfile,
   getCreativeSessionTypes,
   getCreatives,
   searchCreatives,
 } from "./data/creatives.js";
+import { getRequests } from "./data/requests.js";
+import { RequestStatusSchema } from "./schemas/request.js";
 import {
   findSizeSchema,
   listSizeSchema,
   pageSchema,
+  requestSizeSchema,
 } from "./schemas/tool-inputs.js";
-import { getRequests } from "./data/requests.js";
-import { RequestStatusSchema } from "./schemas/request.js";
 
 const server = new McpServer({
   name: "fineapp-mcp",
@@ -38,14 +40,15 @@ server.registerTool(
   {
     title: "List creatives",
     description:
-      "List public FineApp creatives. Pagination is 0-indexed. The first page is page=0.",
+      "List public FineApp creatives. Pagination is 0-indexed. The first page is page=0. You can optionally filter by category.",
     inputSchema: {
       page: pageSchema,
       size: listSizeSchema,
+      category: z.string().min(1).optional(),
     },
   },
-  async ({ page = 0, size = 8 }) => {
-    return jsonResult(await getCreatives(page, size));
+  async ({ page = 0, size = 8, category }) => {
+    return jsonResult(await getCreatives(page, size, category));
   }
 );
 
@@ -54,15 +57,16 @@ server.registerTool(
   {
     title: "Search creatives",
     description:
-      "Search public FineApp creatives using backend search. Pagination is 0-indexed. The first page is page=0. Use short search terms like 'videographer' or 'Stellenbosch'.",
+      "Search public FineApp creatives using backend search. Pagination is 0-indexed. The first page is page=0. Use short search terms like 'videographer' or 'Stellenbosch'. You can optionally filter by category.",
     inputSchema: {
       search: z.string().min(1),
       page: pageSchema,
       size: listSizeSchema,
+      category: z.string().min(1).optional(),
     },
   },
-  async ({ search, page = 0, size = 8 }) => {
-    return jsonResult(await searchCreatives(search, page, size));
+  async ({ search, page = 0, size = 8, category }) => {
+    return jsonResult(await searchCreatives(search, page, size, category));
   }
 );
 
@@ -71,23 +75,38 @@ server.registerTool(
   {
     title: "Find creatives",
     description:
-      "Find public FineApp creatives by optional role and/or location using local filtering on public listing data. Pagination is 0-indexed. The first page is page=0.",
+      "Find public FineApp creatives by optional role, location, and category using local filtering on public listing data. Pagination is 0-indexed. The first page is page=0.",
     inputSchema: {
       role: z.string().min(1).optional(),
       location: z.string().min(1).optional(),
+      category: z.string().min(1).optional(),
       page: pageSchema,
       size: findSizeSchema,
     },
   },
-  async ({ role, location, page = 0, size = 50 }) => {
+  async ({ role, location, category, page = 0, size = 50 }) => {
     return jsonResult(
       await findCreatives({
         page,
         size,
         ...(role !== undefined ? { role } : {}),
         ...(location !== undefined ? { location } : {}),
+        ...(category !== undefined ? { category } : {}),
       })
     );
+  }
+);
+
+server.registerTool(
+  "get_creative_filters",
+  {
+    title: "Get creative filters",
+    description:
+      "Get available FineApp creative specialties and locations from the public filters endpoint.",
+    inputSchema: {},
+  },
+  async () => {
+    return jsonResult(await getCreativeFilters());
   }
 );
 
@@ -143,7 +162,7 @@ server.registerTool(
       "List public FineApp client requests. Pagination is 0-indexed. The first page is page=0. You can optionally filter by request status.",
     inputSchema: {
       page: pageSchema,
-      size: z.number().int().min(1).max(50).default(12),
+      size: requestSizeSchema,
       status: RequestStatusSchema.optional(),
     },
   },

@@ -1,5 +1,6 @@
 import {
   fetchCreativeCards,
+  fetchCreativeFilters,
   fetchCreativeProfileBySlug,
   fetchCreativeSessionTypes,
 } from "../lib/fineapp-api.js";
@@ -9,12 +10,26 @@ function includesQuery(value: string, query?: string) {
   return query ? value.toLowerCase().includes(query) : true;
 }
 
-export async function getCreatives(page = 0, size = 8) {
-  return fetchCreativeCards({ page, size });
+export async function getCreatives(page = 0, size = 8, category?: string) {
+  return fetchCreativeCards({
+    page,
+    size,
+    ...(category !== undefined ? { category } : {}),
+  });
 }
 
-export async function searchCreatives(search: string, page = 0, size = 8) {
-  return fetchCreativeCards({ page, size, search });
+export async function searchCreatives(
+  search: string,
+  page = 0,
+  size = 8,
+  category?: string
+) {
+  return fetchCreativeCards({
+    page,
+    size,
+    search,
+    ...(category !== undefined ? { category } : {}),
+  });
 }
 
 export async function getCreativeProfile(slug: string) {
@@ -33,6 +48,10 @@ export async function getCreativeFullDetails(slug: string) {
     profile,
     sessionTypes,
   };
+}
+
+export async function getCreativeFilters() {
+  return fetchCreativeFilters();
 }
 
 export async function findCreatives({

@@ -49,6 +49,11 @@ export const CreativeProfileSchema = z.object({
   profileComplete: z.boolean(),
 });
 
+export const CreativeFiltersSchema = z.object({
+  specialties: z.array(z.string()),
+  locations: z.array(z.string()),
+});
+
 export const SessionPackageSchema = z.object({
   id: z.number(),
   creativeSessionTypeId: z.number(),

@@ -1,17 +1,20 @@
 import {
   type CreativeCardsParams,
   type CreativeCardsResponse,
+  type CreativeFilters,
   type CreativeProfile,
   type CreativeSessionTypes,
 } from "../types/creative.js";
 import {
   creativeCardsUrl,
+  creativeFiltersUrl,
   creativeProfileBySlugUrl,
   creativeSessionTypesUrl,
   requestsUrl,
 } from "./endpoints.js";
 import {
   CreativeCardsResponseSchema,
+  CreativeFiltersSchema,
   CreativeProfileSchema,
   CreativeSessionTypesSchema,
 } from "../schemas/creative.js";
@@ -46,11 +49,17 @@ export async function fetchCreativeCards({
   page = 0,
   size = 8,
   search,
+  category,
 }: CreativeCardsParams = {}): Promise<CreativeCardsResponse> {
+  const params: CreativeCardsParams = {
+    page,
+    size,
+    ...(search !== undefined ? { search } : {}),
+    ...(category !== undefined ? { category } : {}),
+  };
+
   const parsed = await fetchJson(
-    creativeCardsUrl(
-      search === undefined ? { page, size } : { page, size, search }
-    ),
+    creativeCardsUrl(params),
     CreativeCardsResponseSchema
   );
 
@@ -84,6 +93,10 @@ export async function fetchCreativeSessionTypes(
     creativeSessionTypesUrl(creativeId),
     CreativeSessionTypesSchema
   );
+}
+
+export async function fetchCreativeFilters(): Promise<CreativeFilters> {
+  return fetchJson(creativeFiltersUrl(), CreativeFiltersSchema);
 }
 
 export async function fetchRequests({
