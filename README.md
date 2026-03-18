@@ -193,6 +193,7 @@ Lists client requests from FineApp.
 - MCP TypeScript SDK
 - Zod
 - Prettier
+- Vitest
 
 ## Run locally
 
@@ -212,6 +213,27 @@ Then launch Codex from the repo and check connected MCP servers with:
 ```text
 /mcp
 ```
+
+## Testing
+
+Run tests:
+
+```bash
+npm run test
+```
+
+Run coverage:
+
+```bash
+npm run test:coverage
+```
+
+The project includes tests for:
+
+- endpoint URL builders
+- FineApp API wrappers
+- creative data helpers
+- request data helpers
 
 ## Notes
 

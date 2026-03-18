@@ -59,8 +59,13 @@ export async function findCreatives({
   location,
   page = 0,
   size = 50,
+  category,
 }: FindCreativesParams) {
-  const result = await fetchCreativeCards({ page, size });
+  const result = await fetchCreativeCards({
+    page,
+    size,
+    ...(category !== undefined ? { category } : {}),
+  });
 
   const roleQuery = role?.toLowerCase().trim();
   const locationQuery = location?.toLowerCase().trim();

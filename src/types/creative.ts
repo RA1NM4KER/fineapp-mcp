@@ -16,6 +16,7 @@ export type CreativeCardsParams = {
 export type FindCreativesParams = {
   role?: string;
   location?: string;
+  category?: string;
   page?: number;
   size?: number;
 };
