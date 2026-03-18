@@ -87,10 +87,14 @@ export const CreativeSessionTypeSchema = z.object({
   packages: z.array(SessionPackageSchema),
 });
 
+export type CreativeCardsParams = {
+  page?: number;
+  size?: number;
+  search?: string;
+};
+
 export const CreativeSessionTypesSchema = z.array(CreativeSessionTypeSchema);
 
-export type CreativeCard = z.infer<typeof CreativeCardSchema>;
 export type CreativeCardsResponse = z.infer<typeof CreativeCardsResponseSchema>;
 export type CreativeProfile = z.infer<typeof CreativeProfileSchema>;
-export type CreativeSessionType = z.infer<typeof CreativeSessionTypeSchema>;
 export type CreativeSessionTypes = z.infer<typeof CreativeSessionTypesSchema>;
