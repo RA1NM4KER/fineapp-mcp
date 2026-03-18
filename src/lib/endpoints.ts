@@ -1,6 +1,6 @@
 import type { CreativeCardsParams } from "../types/creative.js";
 
-const BASE_URL = "https://fineapple-api-production.up.railway.app";
+const BASE_URL = "https://fineapple-api-production.up.railway.app/api";
 
 export function creativeCardsUrl({
   page = 0,
@@ -18,13 +18,13 @@ export function creativeCardsUrl({
     params.set("search", search.trim());
   }
 
-  return `${BASE_URL}/api/creatives/cards?${params.toString()}`;
+  return `${BASE_URL}/creatives/cards?${params.toString()}`;
 }
 
 export function creativeProfileBySlugUrl(slug: string) {
-  return `${BASE_URL}/api/creatives/slug/${encodeURIComponent(slug)}`;
+  return `${BASE_URL}/creatives/slug/${encodeURIComponent(slug)}`;
 }
 
 export function creativeSessionTypesUrl(creativeId: number) {
-  return `${BASE_URL}/api/session-types/creative/${creativeId}/full`;
+  return `${BASE_URL}/session-types/creative/${creativeId}/full`;
 }
