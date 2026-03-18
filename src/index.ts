@@ -6,6 +6,7 @@ import {
   getCreativeSessionTypes,
   getCreatives,
   searchCreatives,
+  getCreativeFullDetails,
 } from "./data/creatives.js";
 
 const server = new McpServer({
@@ -97,6 +98,30 @@ server.registerTool(
   },
   async ({ creativeId }) => {
     const result = await getCreativeSessionTypes(creativeId);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+);
+
+server.registerTool(
+  "get_creative_full_details",
+  {
+    title: "Get creative full details",
+    description:
+      "Get a public FineApp creative profile and session types by portfolio slug",
+    inputSchema: {
+      slug: z.string().min(1),
+    },
+  },
+  async ({ slug }) => {
+    const result = await getCreativeFullDetails(slug);
 
     return {
       content: [

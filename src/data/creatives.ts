@@ -19,3 +19,13 @@ export async function getCreativeProfile(slug: string) {
 export async function getCreativeSessionTypes(creativeId: number) {
   return fetchCreativeSessionTypes(creativeId);
 }
+
+export async function getCreativeFullDetails(slug: string) {
+  const profile = await fetchCreativeProfileBySlug(slug);
+  const sessionTypes = await fetchCreativeSessionTypes(profile.id);
+
+  return {
+    profile,
+    sessionTypes,
+  };
+}

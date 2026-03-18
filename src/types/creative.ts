@@ -69,7 +69,7 @@ export const SessionPackageSchema = z.object({
   id: z.number(),
   creativeSessionTypeId: z.number(),
   packageName: z.string(),
-  durationMinutes: z.number(),
+  durationMinutes: z.number().nullable(),
   deliverables: z
     .string()
     .nullable()
