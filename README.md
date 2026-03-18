@@ -1,6 +1,6 @@
 # fineapp-mcp
 
-MCP server for exposing FineApp creatives, profiles, session offerings, creative filters, and client requests through structured tools.
+MCP server for exposing FineApp creatives, filters, profiles, session offerings, and client requests through structured tools.
 
 ## Features
 
@@ -16,6 +16,17 @@ MCP server for exposing FineApp creatives, profiles, session offerings, creative
 - Validates tool inputs and external API responses with Zod
 - Uses live FineApp API data
 
+## What you can do
+
+Once connected to an MCP client like Codex, you can ask things like:
+
+- Find videographers in Stellenbosch and show me their packages.
+- Pick the best FineApp creative for a couple shoot in Stellenbosch and justify the choice using their profile and packages.
+- What services are available on FineApp?
+- What locations are available on FineApp?
+- What client requests are currently open on FineApp?
+- If you could say in one word what the majority of requests are about.
+
 ## Tools
 
 ### `list_creatives`
@@ -30,11 +41,13 @@ Lists creatives.
 
 **Example input**
 
+```json
 {
-"page": 0,
-"size": 8,
-"category": "photographer"
+  "page": 0,
+  "size": 8,
+  "category": "photographer"
 }
+```
 
 ### `search_creatives`
 
@@ -49,12 +62,14 @@ Searches creatives using backend search.
 
 **Example input**
 
+```json
 {
-"search": "videographer",
-"page": 0,
-"size": 8,
-"category": "videographer"
+  "search": "videographer",
+  "page": 0,
+  "size": 8,
+  "category": "videographer"
 }
+```
 
 ### `find_creatives`
 
@@ -70,13 +85,15 @@ Finds creatives by optional role and/or location using local filtering on listin
 
 **Example input**
 
+```json
 {
-"role": "videographer",
-"location": "Stellenbosch",
-"category": "videographer",
-"page": 0,
-"size": 50
+  "role": "videographer",
+  "location": "Stellenbosch",
+  "category": "videographer",
+  "page": 0,
+  "size": 50
 }
+```
 
 ### `get_creative_filters`
 
@@ -88,7 +105,9 @@ Gets available FineApp creative specialties and locations.
 
 **Example input**
 
+```json
 {}
+```
 
 ### `get_creative_profile`
 
@@ -100,9 +119,11 @@ Gets a creative profile by portfolio slug.
 
 **Example input**
 
+```json
 {
-"slug": "chichi"
+  "slug": "chichi"
 }
+```
 
 ### `get_creative_session_types`
 
@@ -114,9 +135,11 @@ Gets session types and packages for a creative by creative ID.
 
 **Example input**
 
+```json
 {
-"creativeId": 7
+  "creativeId": 7
 }
+```
 
 ### `get_creative_full_details`
 
@@ -128,16 +151,20 @@ Gets a creative profile and session types in a single call by portfolio slug.
 
 **Example input**
 
+```json
 {
-"slug": "chichi"
+  "slug": "chichi"
 }
+```
 
 **Example output shape**
 
+```json
 {
-"profile": {},
-"sessionTypes": []
+  "profile": {},
+  "sessionTypes": []
 }
+```
 
 ### `list_requests`
 
@@ -151,11 +178,13 @@ Lists client requests from FineApp.
 
 **Example input**
 
+```json
 {
-"page": 0,
-"size": 12,
-"status": "OPEN"
+  "page": 0,
+  "size": 12,
+  "status": "OPEN"
 }
+```
 
 ## Tech
 
@@ -171,3 +200,22 @@ Lists client requests from FineApp.
 npm install
 npm run dev
 ```
+
+## Example Codex setup
+
+```bash
+codex mcp add fineapp -- npx tsx src/index.ts
+```
+
+Then launch Codex from the repo and check connected MCP servers with:
+
+```text
+/mcp
+```
+
+## Notes
+
+- Pagination is 0-indexed, so the first page is `page=0`.
+- This server is designed for local stdio use with MCP clients like Codex.
+- The project uses live FineApp API data and validates external responses with Zod.
+- Some FineApp endpoints may behave differently depending on the endpoint and request context.
