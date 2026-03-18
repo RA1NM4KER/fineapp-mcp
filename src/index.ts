@@ -9,11 +9,27 @@ import {
   getCreatives,
   searchCreatives,
 } from "./data/creatives.js";
+import {
+  findSizeSchema,
+  listSizeSchema,
+  pageSchema,
+} from "./schemas/tool-inputs.js";
 
 const server = new McpServer({
   name: "fineapp-mcp",
   version: "0.1.0",
 });
+
+function jsonResult(data: unknown) {
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(data, null, 2),
+      },
+    ],
+  };
+}
 
 server.registerTool(
   "list_creatives",
@@ -22,21 +38,12 @@ server.registerTool(
     description:
       "List public FineApp creatives. Pagination is 0-indexed. The first page is page=0.",
     inputSchema: {
-      page: z.number().int().min(0).default(0),
-      size: z.number().int().min(1).max(50).default(8),
+      page: pageSchema,
+      size: listSizeSchema,
     },
   },
   async ({ page = 0, size = 8 }) => {
-    const result = await getCreatives(page, size);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(await getCreatives(page, size));
   }
 );
 
@@ -48,21 +55,12 @@ server.registerTool(
       "Search public FineApp creatives using backend search. Pagination is 0-indexed. The first page is page=0. Use short search terms like 'videographer' or 'Stellenbosch'.",
     inputSchema: {
       search: z.string().min(1),
-      page: z.number().int().min(0).default(0),
-      size: z.number().int().min(1).max(50).default(8),
+      page: pageSchema,
+      size: listSizeSchema,
     },
   },
   async ({ search, page = 0, size = 8 }) => {
-    const result = await searchCreatives(search, page, size);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(await searchCreatives(search, page, size));
   }
 );
 
@@ -75,25 +73,19 @@ server.registerTool(
     inputSchema: {
       role: z.string().min(1).optional(),
       location: z.string().min(1).optional(),
-      page: z.number().int().min(0).default(0),
-      size: z.number().int().min(1).max(100).default(50),
+      page: pageSchema,
+      size: findSizeSchema,
     },
   },
   async ({ role, location, page = 0, size = 50 }) => {
-    const result = await findCreatives({
-      page,
-      size,
-      ...(role !== undefined ? { role } : {}),
-      ...(location !== undefined ? { location } : {}),
-    });
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(
+      await findCreatives({
+        page,
+        size,
+        ...(role !== undefined ? { role } : {}),
+        ...(location !== undefined ? { location } : {}),
+      })
+    );
   }
 );
 
@@ -107,16 +99,7 @@ server.registerTool(
     },
   },
   async ({ slug }) => {
-    const result = await getCreativeProfile(slug);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(await getCreativeProfile(slug));
   }
 );
 
@@ -131,16 +114,7 @@ server.registerTool(
     },
   },
   async ({ creativeId }) => {
-    const result = await getCreativeSessionTypes(creativeId);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(await getCreativeSessionTypes(creativeId));
   }
 );
 
@@ -155,16 +129,7 @@ server.registerTool(
     },
   },
   async ({ slug }) => {
-    const result = await getCreativeFullDetails(slug);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResult(await getCreativeFullDetails(slug));
   }
 );
 
